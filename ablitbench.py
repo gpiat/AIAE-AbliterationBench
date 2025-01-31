@@ -3,7 +3,7 @@
 
 ## Install from pip
 # !pip install erisforge
-!pip install datasets
+# !pip install datasets
 
 import argparse
 import random
@@ -43,10 +43,10 @@ def parse_args():
         description='What the program does',
         epilog='Text at the bottom of help')
 
-    parser.add_argument('model_name', 
+    parser.add_argument('-n', '--model_name', 
                         default="Qwen/Qwen-1.5-0.5B-Chat")
-    parser.add_argument('max_inst', default=100)
-    parser.add_argument('batch_size', default=10)
+    parser.add_argument('-m', '--max_inst', default=100, type=int)
+    parser.add_argument('-b', '--batch_size', default=10, type=int)
     parser.add_argument('-s', '--search', action='store_true')
 
     return parser.parse_args()
