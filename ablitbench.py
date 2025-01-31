@@ -96,11 +96,12 @@ if __name__ == '__main__':
         max_n_objective_behaviour_instruction=max_inst,
     )
 
+
     ## Find Direction for Objective Behavior Transformation
 
     ### Computing outputs for instructions
-    # They will be used to find the actual direction
-    
+    # They will be used to find the actual direction in the residual
+    # stream + eval the model before abliteration
 
     model_responses = {"obj_beh": [], "anti_obj": []}
     for batch in range(0, max_inst, batch_size):
@@ -113,6 +114,21 @@ if __name__ == '__main__':
         model_responses["anti_obj"].extend(temp["anti_obj"])
     
     forge.free_memory([tokenized_instructions])
+
+
+    ## Testing model pre-abliteration
+
+    refusals_pre_ablit = []
+    for conversation in zip(dataset[1][0][:max_inst], 
+                            model_responses["anti_obj"]):
+        refusals_pre_ablit.append(
+            scorer.score(user_query=conversation[0],
+                         model_response=conversation[1])
+        )
+
+    # TODO: output some more meaningful metrics here
+    print("Mean refusal Score before Abliteration:", sum(refusals_pre_ablit)/len(refusals_pre_ablit))
+
 
     """### Computing heuristic-based direction
     Uses a layer near the middle. Won't work as well as testing the directions to choose the best one, but is significantly cheaper to run
@@ -170,19 +186,19 @@ if __name__ == '__main__':
             )
         )
 
-    refusal_scores = []
+    refusals_post_ablit = []
     for conversation in conversations:
         # TODO: this exception is only there for testing/debug purposes. It may have issues if the roles can vary in names (e.g. "AI" instead of "assistant").
         if conversation[0]["role"] != "user" or conversation[1]["role"] != "assistant":
             print(f"Starting role: {conversation[0]['role']}\nFollowing role: {conversation[1]['role']}")
             raise ValueError("Conversation should start with a user prompt and be followed by an assistant response.")
-        refusal_scores.append(
+        refusals_post_ablit.append(
             scorer.score(user_query=conversation[0]["content"],
                          model_response=conversation[1]["content"])
         )
 
     # TODO: output some more meaningful metrics here
-    print("Mean refusal Score:", sum(refusal_scores)/len(refusal_scores))
+    print("Mean refusal Score after Abliteration:", sum(refusals_post_ablit)/len(refusals_post_ablit))
 
     """Could be useful to look at the output conversations for testing purposes. Leaving it commented so we can just "execute all cells" without polluting the outputs."""
 
@@ -193,17 +209,17 @@ if __name__ == '__main__':
 
     forge.free_memory([conversations, model_responses])  # Free memory after testing
 
-    """## Exporting model"""
+    # """## Exporting model"""
 
-    forge.save_model(
-        model=model,
-        tokenizer=tokenizer,
-        behaviour_dir=refusal_dir,
-        output_model_name=f"{model_name}_abliterated",  # Name for the saved model
-        to_hub=False,  # Set to True to push the model to the HuggingFace Hub
-        # Using None, ErisForge will try to guess the model architecture.
-        # This could be replaced by a variable and specified manually.
-        # The list of architectures is the keys in the dict defined by this JSON file:
-        # https://github.com/Tsadoq/ErisForge/blob/main/erisforge/assets/llm_models.json
-        model_architecture=None,
-    )
+    # forge.save_model(
+    #     model=model,
+    #     tokenizer=tokenizer,
+    #     behaviour_dir=refusal_dir,
+    #     output_model_name=f"{model_name}_abliterated",  # Name for the saved model
+    #     to_hub=False,  # Set to True to push the model to the HuggingFace Hub
+    #     # Using None, ErisForge will try to guess the model architecture.
+    #     # This could be replaced by a variable and specified manually.
+    #     # The list of architectures is the keys in the dict defined by this JSON file:
+    #     # https://github.com/Tsadoq/ErisForge/blob/main/erisforge/assets/llm_models.json
+    #     model_architecture=None,
+    # )
