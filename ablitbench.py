@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-!pip install "git+https://github.com/Tsadoq/ErisForge.git#egg=erisforge" -r https://raw.githubusercontent.com/Tsadoq/ErisForge/main/requirements.txt
+# !pip install "git+https://github.com/Tsadoq/ErisForge.git#egg=erisforge" -r https://raw.githubusercontent.com/Tsadoq/ErisForge/main/requirements.txt
 
 ## Install from pip
 # !pip install erisforge
