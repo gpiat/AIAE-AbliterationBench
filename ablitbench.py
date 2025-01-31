@@ -102,7 +102,7 @@ if __name__ == '__main__':
     ### Computing outputs for instructions
     # They will be used to find the actual direction in the residual
     # stream + eval the model before abliteration
-
+    forge.max_toks = 15
     model_responses = {"obj_beh": [], "anti_obj": []}
     for batch in range(0, max_inst, batch_size):
         temp = forge.compute_output(
@@ -120,10 +120,10 @@ if __name__ == '__main__':
 
     refusals_pre_ablit = []
     for conversation in zip(dataset[1][0][:max_inst], 
-                            model_responses["anti_obj"]):
+                            model_responses["obj_beh"]):
         refusals_pre_ablit.append(
             scorer.score(user_query=conversation[0],
-                         model_response=conversation[1])
+                         model_response=tokenizer.decode(conversation[1][0][0]))
         )
 
     # TODO: output some more meaningful metrics here
