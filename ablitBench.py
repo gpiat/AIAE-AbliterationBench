@@ -80,34 +80,34 @@ if __name__ == '__main__':
 
     refusal_scores_baseline = []
     refusal_scores_intervention = []
-    model_names = args.model_names
-    for model_name in model_names:
-        # for model_name in model_names:
-        #     print(model_name)
-        # sys.exit()
-        print(f"\n\n\n##################\n\n\nRunning ablation benchmark for model: {model_name}\n\n\n##################\n\n\n")
+    for model_name in args.model_names:
+        print("\n\n\n##################\n\n\n"
+             f"Running ablation benchmark for model: {model_name}"
+              "\n\n\n##################\n\n\n")
         # Initialize erisforge object:
         forge = Forge()
 
         # Load model and tokenizer:
-        # model_name = args.model_name
         model = AutoModelForCausalLM.from_pretrained(
             model_name,
             trust_remote_code=True,
             torch_dtype=torch.bfloat16,
         ).to(forge.device)
-        tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name, trust_remote_code=True
+        )
 
         # Assess refusal score on base model:
         max_inst = args.n_instructions
         batch_size = args.batch_size
         conversations_standard = []
-        for batch in range(0, len(dataset['harmful']['test'][:max_inst]), batch_size):
+        subdataset = dataset['harmful']['test'][:max_inst]
+        for batch in range(0, max_inst, batch_size):
             conversations_standard.extend(forge.evaluate_base_model(
                 model=model,
                 tokenizer=tokenizer,
                 max_new_tokens=50,
-                instructions=dataset['harmful']['test'][:max_inst][batch:min(batch + batch_size, len(dataset['harmful']['test'][:max_inst]))]
+                instructions=subdataset[batch:min(batch + batch_size, max_inst)]
             )
         )
 
@@ -121,7 +121,13 @@ if __name__ == '__main__':
             # print(f'\nUser query:\n{conv[0]["content"]}\n')
             # print(f'Model response:\n{conv[1]["content"]}')
         refusal_score_base = sum(refusal_scores)/len(refusal_scores)
-        print(f'''\nModel before ablation has {refusal_score_base:.2f} refusal score - {sum(refusal_scores):.0f} harmful prompts refused over {len(refusal_scores)} prompts.\n''')
+        print(
+            '\n'
+            f'Model before ablation has {refusal_score_base:.2f}'
+            f' refusal score - {sum(refusal_scores):.0f} harmful'
+            ' prompts refused over {len(refusal_scores)} prompts.'
+            '\n'
+        )
 
         # Select layers:
         tot_number_of_layers = len(model.model.layers)
@@ -145,11 +151,16 @@ if __name__ == '__main__':
         refusal_scores_baseline.append(refusal_score_base)
         refusal_scores_intervention.append(final_refusal_score)
         # Print results:
-        print("\nRefusal score before ablation: ", refusal_score_base)
+        print("\n"
+              "Refusal score before ablation: ", refusal_score_base)
         print("Refusal score after ablation: ", final_refusal_score)
         print("Refusal Drop Rate: ", refusal_score_base - final_refusal_score)
 
-    plot_refusal_scores(model_names, refusal_scores_baseline, refusal_scores_intervention)
+    plot_refusal_scores(
+        args.model_names,
+        refusal_scores_baseline,
+        refusal_scores_intervention
+    )
 
 
 
