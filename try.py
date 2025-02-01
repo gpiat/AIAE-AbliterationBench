@@ -1,19 +1,21 @@
 import os
 import sys
-# sys.path.append('/Users/damifass/Desktop')
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+import numpy as np
 import platform
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+
 from erisforge.eris_forge import Forge
 from erisforge.scorers.refusal_scorer.expression_refusal_scorer import ExpressionRefusalScorer
 
-import matplotlib.pyplot as plt
-import numpy as np
-
 from datasets import load_dataset
+from transformers import AutoModelForCausalLM
+from transformers import AutoTokenizer
+
 from sklearn.model_selection import train_test_split
+
+import matplotlib.pyplot as plt
 
 def print_memory_usage(prefix=""):
     """Prints memory usage information (GPU or CPU)."""
