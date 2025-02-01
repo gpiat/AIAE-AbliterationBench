@@ -8,8 +8,8 @@ import torch
 
 from barplot import plot_refusal_scores
 from datasets import load_dataset
-from erismod.eris_forge import Forge
-from erismod.scorers.refusal_scorer.expression_refusal_scorer import ExpressionRefusalScorer
+from erisforge.eris_forge import Forge
+from erisforge.scorers.refusal_scorer.expression_refusal_scorer import ExpressionRefusalScorer
 from sklearn.model_selection import train_test_split
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
