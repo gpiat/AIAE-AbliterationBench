@@ -103,7 +103,7 @@ final_refusal_score = result_dict[0]['score']
 # Print results:
 print("\nRefusal score before ablation: ", refusal_score_base)
 print("Refusal score after ablation: ", final_refusal_score)
-print("\nRefusal Drop Rate: ", refusal_score_base - final_refusal_score)
+print("Refusal Drop Rate: ", refusal_score_base - final_refusal_score)
 
 
 # Create another script (barplot.py) and call it from here passing [base_scores] and [final_scores] as arguments:

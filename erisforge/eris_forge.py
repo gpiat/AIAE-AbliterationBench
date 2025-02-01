@@ -345,13 +345,13 @@ class Forge:
 
                 process = psutil.Process()
                 mem_info = process.memory_info()
-                used_memory = mem_info.rss
-                total_memory = psutil.virtual_memory().total
-                used_percentage = (used_memory / total_memory) if total_memory > 0 else 0
-                print(f"\n=========================== USED GPU MEMORY: {used_percentage*1000:.0f}% ===========================\n")
+                used_memory = mem_info.rss / (1024 ** 3)  # Resident Set Size
+                available_memory = psutil.virtual_memory().available / (1024 ** 3)
 
-                if float(used_percentage*10) > float(0.8):
-                    logging.warning(f"System memory usage above {0.8*100:.0f}%: {used_percentage*1000:.0f}% used.")
+                # print(f"\n=========================== USED GPU MEMORY: {(used_memory/(used_memory+available_memory)*100):.0f}% ===========================\n")
+
+                if float(used_memory/(used_memory+available_memory)) > float(0.8):
+                    logging.warning(f"System memory usage above {0.8*100:.0f}%: {(used_memory/(used_memory+available_memory)*100):.0f}% used.")
 
             except ImportError:
                 logging.warning("psutil not found. Cannot check system memory usage. Install with: pip install psutil")
@@ -431,14 +431,14 @@ class Forge:
         self.free_memory([obj_beh_toks, anti_obj_toks])
 
         
-        print('\nStarting loop over layers. We will find a refusal direction for each layer, ablate the model on that layer and test the refusal score...')
-        print('\nThe best refusal direction will be the one that minimizes the refusal score on the harmful instructions, i.e. the one that affects the model the most.')
+        # print('\nStarting loop over layers. We will find a refusal direction for each layer, ablate the model on that layer and test the refusal score...')
+        # print('\nThe best refusal direction will be the one that minimizes the refusal score on the harmful instructions, i.e. the one that affects the model the most.')
         
         for layer_idx in trange( min_layer, max_layer, desc="Finding best refusal direction" ):
 
             start_time = time.time()
             
-            print('\nComputing refusal direction for layer:', layer_idx)
+            print('\n\nComputing refusal direction for layer:', layer_idx)
             tmp_obj_beh_dir = self.compute_objective_behaviour_direction(
                 model=model,
                 objective_behaviour_outputs=d_out["obj_beh"],
