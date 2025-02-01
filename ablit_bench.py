@@ -24,7 +24,7 @@ def parse_arguments():
         required=True,
         action='extend',
         nargs='+',
-        help='Model names')
+        help='HF Names or local paths of models to benchmark.')
     parser.add_argument(
         '-l', '--num_layers',
         default=2,
@@ -38,7 +38,7 @@ def parse_arguments():
         type=int,
         help='Number of instructions to process when searching for '
              'best modification. Higher is more accurate, lower is '
-             'faster.')
+             'faster. Will also be used for performance evaluation.')
     parser.add_argument(
         '-b', '--batch_size',
         default=10,
