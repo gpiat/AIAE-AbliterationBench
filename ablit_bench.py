@@ -22,8 +22,6 @@ def parse_arguments():
     parser.add_argument(
         '-n', '--model_names',
         required=True,
-        # default=['Qwen/Qwen-1.5-0.5B-Chat',
-        #          'google/gemma-1.1-2b-it'],
         action='extend',
         nargs='+',
         help='Model names')
