@@ -98,12 +98,22 @@ class Forge:
         :param bar: Progress bar object.
         :return: Tokenized instruction in the form of a tensor.
         """
-        tokens: torch.Tensor = tokenizer.apply_chat_template(
-            conversation=[{"role": "user", "content": instruction}],
-            add_generation_prompt=True,
-            return_tensors="pt",
-        )
-
+        try:
+            tokens: torch.Tensor = tokenizer.apply_chat_template(
+                conversation=[{"role": "user", "content": instruction}],
+                add_generation_prompt=True,
+                return_tensors="pt",
+            )
+        except ValueError:
+            print("Warning: your model's tokenizer does not support "
+                  "chat templates. It is likely not trained as an AI"
+                  " assistant. Results may be unexpected or useless."
+                  " Falling back to default template.",
+                  file=sys.stderr)
+            tokens: torch.Tensor = tokenizer.encode(
+                f"User query: {instruction}\nAI Assistant: ",
+                return_tensors="pt",
+            )
         if bar:
             bar.update(n=1)
 
