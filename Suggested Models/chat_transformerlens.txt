@@ -1,0 +1,15 @@
+OFFICIAL_MODEL_NAMES = [
+    "meta-llama/Llama-2-7b-chat-hf",
+    "meta-llama/Llama-2-13b-chat-hf",
+    "meta-llama/Llama-2-70b-chat-hf",
+    "Qwen/Qwen-1_8B-Chat",
+    "Qwen/Qwen-7B-Chat",
+    "Qwen/Qwen-14B-Chat",
+    "Qwen/Qwen1.5-0.5B-Chat",
+    "Qwen/Qwen1.5-1.8B-Chat",
+    "Qwen/Qwen1.5-4B-Chat",
+    "Qwen/Qwen1.5-7B-Chat",
+    "Qwen/Qwen1.5-14B-Chat",
+    "01-ai/Yi-6B-Chat",
+    "01-ai/Yi-34B-Chat",
+]

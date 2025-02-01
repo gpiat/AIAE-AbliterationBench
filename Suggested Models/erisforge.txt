@@ -1,0 +1,114 @@
+{
+    "baichuan": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "bert": {
+        "self_attention": "attention.output.dense.weight",
+        "mlp": "output.dense.weight"
+    },
+    "chatglm": {
+        "self_attention": "self_attention.dense.weight",
+        "mlp": "mlp.dense_4h_to_h.weight"
+    },
+    "cohere": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "distilbert": {
+        "self_attention": "attention.out_lin.weight",
+        "mlp": "ffn.lin2.weight"
+    },
+    "exaone": {
+        "self_attention": "attn.attention.out_proj.weight",
+        "mlp": "mlp.c_proj.weight"
+    },
+    "falcon": {
+        "self_attention": "self_attention.dense.weight",
+        "mlp": "mlp.dense_4h_to_h.weight"
+    },
+    "gemma": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "gemma2": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "gpt_neox": {
+        "self_attention": "attention.dense.weight",
+        "mlp": "mlp.dense_4h_to_h.weight"
+    },
+    "gpt2": {
+        "self_attention": "attn.c_proj.weight",
+        "mlp": "mlp.c_fc.weight"
+    },
+    "gpt_bigcode": {
+        "self_attention": "attn.c_proj.weight",
+        "mlp": "mlp.c_fc.weight"
+    },
+    "internlm2": {
+        "self_attention": "attention.wo.weight",
+        "mlp": "feed_forward.w3.weight"
+    },
+    "jais": {
+        "self_attention": "attn.c_proj.weight",
+        "mlp": "mlp.c_fc2.weight"
+    },
+    "llama": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "mamba": {
+        "self_attention": "mixer.out_proj.weight",
+        "mlp": "mixer.x_proj.weight"
+    },
+    "mistral": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "phi-1": {
+        "self_attention": "mixer.out_proj.weight",
+        "mlp": "mlp.fc2.weight"
+    },
+    "phi2": {
+        "self_attention": "self_attn.dense.weight",
+        "mlp": "mlp.fc2.weight"
+    },
+    "phi3-small": {
+        "self_attention": "self_attn.dense.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "phi3": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "qwen": {
+        "self_attention": "attn.c_proj.weight",
+        "mlp": "mlp.w1.weight"
+    },
+    "qwen2": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "roberta": {
+        "self_attention": "attention.output.dense.weight",
+        "mlp": "output.dense.weight"
+    },
+    "solar": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "model.layers.${layer_index}.mlp.down_proj.weight"
+    },
+    "stablelm_epoch": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "stablelm": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.down_proj.weight"
+    },
+    "starcoder2": {
+        "self_attention": "self_attn.o_proj.weight",
+        "mlp": "mlp.c_proj.weight"
+    }
+}
