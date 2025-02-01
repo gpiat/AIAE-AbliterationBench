@@ -8,7 +8,10 @@
 #   - [Qwen 1.5 0.5B Chat] and [gemma 1.1 2b it] have been verified as working correctly.
 
 python ablit_bench.py \
-  -n Qwen/Qwen-1.5-0.5B-Chat google/gemma-1.1-2b-it \
+  -n Qwen/Qwen-1.5-0.5B-Chat meta-llama/Llama-2-7b-chat-hf \
   -l 2 \
-  -i 20 \
+  -i 50 \
   -b 10
+
+
+# google/gemma-1.1-2b-it
