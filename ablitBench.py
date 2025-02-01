@@ -84,6 +84,7 @@ if __name__ == '__main__':
         print("\n\n\n##################\n\n\n"
              f"Running ablation benchmark for model: {model_name}"
               "\n\n\n##################\n\n\n")
+
         # Initialize erisforge object:
         forge = Forge()
 
@@ -93,6 +94,15 @@ if __name__ == '__main__':
             trust_remote_code=True,
             torch_dtype=torch.bfloat16,
         ).to(forge.device)
+
+        try:
+            tot_number_of_layers = len(model.model.layers)
+        except AttributeError:
+            print(f"{model_name} is not supported. Its HF "
+                  "implementation must have a `model` attribute.",
+                  file=sys.stderr)
+            continue
+
         tokenizer = AutoTokenizer.from_pretrained(
             model_name, trust_remote_code=True
         )
@@ -130,7 +140,6 @@ if __name__ == '__main__':
         )
 
         # Select layers:
-        tot_number_of_layers = len(model.model.layers)
         min_layer = int( (tot_number_of_layers / 2) - (args.num_layers / 2) )
         max_layer = int( min_layer + args.num_layers )
 
@@ -161,6 +170,3 @@ if __name__ == '__main__':
         refusal_scores_baseline,
         refusal_scores_intervention
     )
-
-
-
