@@ -363,7 +363,7 @@ class Forge:
 
 
 
-    def find_approximate_best_objective_behaviour_direction(
+    def approx_best_objective_behaviour_dir(
         self,
         model: AutoModelForCausalLM | PreTrainedModel,
         tokenizer: PreTrainedTokenizerBase | AutoTokenizer,
@@ -394,7 +394,7 @@ class Forge:
         # logging.info(
         #     f"Using layers from {min_layer} to {max_layer} for computing best direction."
         # )
-        
+
         print(f"\n============== Refusal scores will be computed for {max_layer-min_layer} different layers ==============")
 
         score_x_layer = []
@@ -430,14 +430,14 @@ class Forge:
         print('\nFreeing memory from tokenized instructions...')
         self.free_memory([obj_beh_toks, anti_obj_toks])
 
-        
+
         # print('\nStarting loop over layers. We will find a refusal direction for each layer, ablate the model on that layer and test the refusal score...')
         # print('\nThe best refusal direction will be the one that minimizes the refusal score on the harmful instructions, i.e. the one that affects the model the most.')
-        
+
         for layer_idx in trange( min_layer, max_layer, desc="Finding best refusal direction" ):
 
             start_time = time.time()
-            
+
             print('\n\nComputing refusal direction for layer:', layer_idx)
             tmp_obj_beh_dir = self.compute_objective_behaviour_direction(
                 model=model,
@@ -449,7 +449,7 @@ class Forge:
 
             print('\nRunning inference on harmful instrunctions on the ablated model ...')
             # Batching to avoid memory issue:
-            batch_size = 10 
+            batch_size = 10
             conversations_ablated = []
             for batch in range(0, len(eval_objective_behaviour_instructions), batch_size):
                 conversations_ablated.extend(self.run_forged_model(
@@ -465,7 +465,7 @@ class Forge:
                     )
                 )
                 self._check_memory_usage()
-            
+
             # print(f"\n\n\n=========================== LENGTH CONVERSATION ABLATED LIST: {len(conversations_ablated)} ===========================\n\n\n")
 
             # print('\nRunning inference on harmless instrunctions on the "added" model ...')
@@ -521,7 +521,7 @@ class Forge:
             print(f'''\nLayer {layer_idx} done in {end_time-start_time:.2f} seconds. Refusal score: {refusal_score:.2f} - {sum(refusal_scores):.0f} harmful prompts refused over {len(refusal_scores)} prompts.''')
 
             # print('\nFinish computing layer', layer_idx)
-            
+
 
         score_x_layer = sorted(score_x_layer, key=lambda x: x["score"], reverse=False)
         # return score_x_layer[0]["dir"]
@@ -628,11 +628,14 @@ class Forge:
             min_layer = max(int(len(model.model.layers) * 0.2), 1)
         if max_layer is None:
             max_layer = min(
-                int(len(model.model.layers) * 0.8), len(model.model.layers) - 2
+                int(len(model.model.layers) * 0.8),
+                len(model.model.layers) - 2
             )
 
         new_model = self._replace_layers(
-            new_layer=type_of_layer if type_of_layer else AblationDecoderLayer,
+            new_layer=(type_of_layer 
+                       if type_of_layer
+                       else AblationDecoderLayer),
             max_layer=max_layer,
             min_layer=min_layer,
             model=model,
@@ -641,29 +644,36 @@ class Forge:
 
         if tokenized_instructions:
             logging.info(
-                "Using provided tokenized instructions. No need to tokenize again."
+                "Using provided tokenized instructions. "
+                "No need to tokenize again."
             )
             instr_tokens = tokenized_instructions
         elif instructions:
-            logging.info("Tokenizing instructions for newly forged model.")
+            logging.info(
+                "Tokenizing instructions for newly forged model."
+            )
             with tqdm(
                 total=len(instructions),
                 desc="Tokenizing instructions for newly forged model",
             ) as bar:
                 instr_tokens: List[torch.Tensor] = [
                     self._tokenize(
-                        tokenizer=tokenizer, instruction=instruction, bar=bar
+                        tokenizer=tokenizer,
+                        instruction=instruction,
+                        bar=bar
                     )
                     for instruction in instructions
                 ]
         else:
             raise ValueError(
-                "Either instructions or tokenized instructions must be provided."
+                "Either instructions or tokenized instructions "
+                "must be provided."
             )
 
         logging.info("Generating tokens for newly forged model.")
         with tqdm(
-            total=len(instructions), desc="Generating tokens for newly forged model"
+            total=len(instructions),
+            desc="Generating tokens for newly forged model"
         ) as bar:
             encoded_responses = [
                 self._generate_new_tokens(
@@ -684,14 +694,15 @@ class Forge:
                     {
                         "role": "assistant",
                         "content": tokenizer.decode(
-                            enc_resp.sequences[0].tolist(), skip_special_tokens=True
+                            enc_resp.sequences[0].tolist(),
+                            skip_special_tokens=True
                         ),
                     },
                 ]
             )
 
         return conversations
-    
+
 
 
     def evaluate_base_model(
@@ -716,7 +727,8 @@ class Forge:
 
         if tokenized_instructions:
             logging.info(
-                "Using provided tokenized instructions. No need to tokenize again."
+                "Using provided tokenized instructions. "
+                "No need to tokenize again."
             )
             instr_tokens = tokenized_instructions
         elif instructions:
@@ -726,16 +738,22 @@ class Forge:
             ) as bar:
                 instr_tokens: List[torch.Tensor] = [
                     self._tokenize(
-                        tokenizer=tokenizer, instruction=instruction, bar=bar
+                        tokenizer=tokenizer,
+                        instruction=instruction,
+                        bar=bar
                     )
                     for instruction in instructions
                 ]
         else:
             raise ValueError(
-                "Either instructions or tokenized instructions must be provided."
+                "Either instructions or tokenized instructions "
+                "must be provided."
             )
 
-        with tqdm(total=len(instructions), desc="Inference on base model...") as bar:
+        with tqdm(
+            total=len(instructions),
+            desc="Inference on base model..."
+        ) as bar:
             encoded_responses = [
                 self._generate_new_tokens(
                     model=model,
@@ -755,7 +773,8 @@ class Forge:
                     {
                         "role": "assistant",
                         "content": tokenizer.decode(
-                            enc_resp.sequences[0].tolist(), skip_special_tokens=True
+                            enc_resp.sequences[0].tolist(),
+                            skip_special_tokens=True
                         ),
                     },
                 ]
@@ -781,7 +800,9 @@ class Forge:
         :return: Modified tensor.
         """
         if abs(scale_factor) > 1.0:
-            raise ValueError("The scale factor must be between -1.0 and 1.0.")
+            raise ValueError(
+                "The scale factor must be between -1.0 and 1.0."
+            )
 
         tensor_float32 = tensor.to(torch.float32)
         refusal_dir_float32 = behaviour_dir.to(torch.float32)
@@ -826,20 +847,26 @@ class Forge:
         :return: Modified model.
         """
         if abs(scale_factor) > 1.0:
-            raise ValueError("The scale factor must be between -1.0 and 1.0.")
+            raise ValueError(
+                "The scale factor must be between -1.0 and 1.0."
+            )
         if not model_architecture:
             logging.warning(
-                "No model architecture provided. Trying to identify the model architecture based on the layer names."
+                "No model architecture provided. Trying to identify"
+                " the model architecture based on the layer names."
             )
             model_architecture = identify_model(model.model)
-        layer_names = get_layers_names_by_model(model_architecture.lower())
+        layer_names = get_layers_names_by_model(
+            model_architecture.lower()
+        )
         custom_model = model.model
 
         if min_layer is None:
             min_layer = max(int(len(model.model.layers) * 0.2), 2)
         if max_layer is None:
             max_layer = min(
-                int(len(model.model.layers) * 0.8), len(model.model.layers) - 3
+                int(len(model.model.layers) * 0.8),
+                len(model.model.layers) - 3
             )
 
         for layer_idx in range(min_layer, max_layer):
@@ -856,7 +883,11 @@ class Forge:
                     behaviour_dir=behaviour_dir,
                     scale_factor=scale_factor,
                 )
-                setattr(target, parts[-1], torch.nn.Parameter(modified_weight))
+                setattr(
+                    target,
+                    parts[-1],
+                    torch.nn.Parameter(modified_weight)
+                )
         if output_model_name:
             model.save_pretrained(
                 output_model_name,
@@ -869,7 +900,8 @@ class Forge:
                 )
         else:
             logging.warning(
-                "No output model name provided. Model not saved to disk nor pushed to hub."
+                "No output model name provided. "
+                "Model not saved to disk nor pushed to hub."
             )
 
         return model

@@ -123,7 +123,7 @@ if __name__ == '__main__':
         max_layer = int( min_layer + args.num_layers )
 
         # Find direction through layer search and run ablation:
-        result_dict = forge.find_approximate_best_objective_behaviour_direction(
+        result_dict = forge.approx_best_objective_behaviour_dir(
             model=model,
             tokenizer=tokenizer,
             scorer=scorer,
