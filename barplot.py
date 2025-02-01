@@ -84,8 +84,8 @@ def parse_arguments():
 
 if __name__ == "__main__":
     args = parse_arguments()
-    plot_refusal_scores(args.model_names, 
-                        args.ref_scores_base, 
+    plot_refusal_scores(args.model_names,
+                        args.ref_scores_base,
                         args.ref_scores_post,
                         args.safe_scores_base,
                         args.safe_scores_post)
