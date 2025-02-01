@@ -75,7 +75,7 @@ def get_harmless_instructions():
 
 if __name__ == '__main__':
     args = parse_arguments()
-    dataset = {'harmful': get_harmful_instructions(), 
+    dataset = {'harmful': get_harmful_instructions(),
                'harmless': get_harmless_instructions()}
 
     refusal_scores_baseline = []
@@ -133,8 +133,8 @@ if __name__ == '__main__':
             model=model,
             tokenizer=tokenizer,
             scorer=scorer,
-            eval_objective_behaviour_instructions=dataset['harmful']['test'][:max_inst],
-            eval_antiobjective_instructions=dataset['harmless']['test'][:max_inst],
+            eval_objective_behaviour_instructions=dataset['harmful']['train'][:max_inst],
+            eval_antiobjective_instructions=dataset['harmless']['train'][:max_inst],
             min_layer=min_layer,
             max_layer=max_layer,
         )
