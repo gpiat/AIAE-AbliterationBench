@@ -338,7 +338,7 @@ class Forge:
                 used_memory = mem_info.rss
                 total_memory = psutil.virtual_memory().total
                 used_percentage = (used_memory / total_memory) if total_memory > 0 else 0
-                print(f"\n\n\n=========================== USED GPU MEMORY: {used_percentage*1000:.0f} ===========================\n\n\n")
+                print(f"\n=========================== USED GPU MEMORY: {used_percentage*1000:.0f}% ===========================\n")
 
                 if float(used_percentage*10) > float(0.8):
                     logging.warning(f"System memory usage above {0.8*100:.0f}%: {used_percentage*1000:.0f}% used.")

@@ -5,7 +5,7 @@ import platform
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from erisforge.eris_forge import Forge
-from erisforge.scorers import ExpressionRefusalScorer
+from erisforge.scorers.refusal_scorer.expression_refusal_scorer import ExpressionRefusalScorer
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -76,7 +76,7 @@ forge = Forge()
 # datasets to be used for caching and testing, split by harmful/harmless
 dataset = [get_harmful_instructions(), get_harmless_instructions()] # Format: [harmful, harmless]
 
-max_inst = 20
+max_inst = 5
 
 print_memory_usage()
 
@@ -96,7 +96,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 scorer = ExpressionRefusalScorer()
 
 # Assess refusal score on base model:
-batch_size = 10 
+batch_size = 5 
 conversations_standard = []
 for batch in range(0, len(dataset[0][1][:max_inst]), batch_size):
     conversations_standard.extend(forge.evaluate_base_model(
