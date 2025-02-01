@@ -45,7 +45,8 @@ def parse_arguments():
         '-b', '--batch_size',
         default=10,
         type=int,
-        help='Instructions processed per batch - increase based on memory available')
+        help='Instructions processed per batch - '
+             'higher is faster, lower uses less memory.')
     return parser.parse_args()
 
 # Download datasets:
@@ -53,8 +54,10 @@ def get_harmful_instructions():
     hf_path = 'Undi95/orthogonal-activation-steering-TOXIC'
     dataset = load_dataset(hf_path)
     instructions = [i['goal'] for i in dataset['test']]
-    train, test = train_test_split(instructions, test_size=0.2, random_state=42)
-    return train, test
+    train, test = train_test_split(instructions,
+                                   test_size=0.2,
+                                   random_state=42)
+    return {'train': train, 'test': test}
 
 def get_harmless_instructions():
     hf_path = 'tatsu-lab/alpaca'
@@ -64,13 +67,16 @@ def get_harmless_instructions():
     for i in range(len(dataset['train'])):
         if dataset['train'][i]['input'].strip() == '':
             instructions.append(dataset['train'][i]['instruction'])
-    train, test = train_test_split(instructions, test_size=0.2, random_state=42)
-    return train, test
+    train, test = train_test_split(instructions,
+                                   test_size=0.2,
+                                   random_state=42)
+    return {'train': train, 'test': test}
 
 
 if __name__ == '__main__':
     args = parse_arguments()
-    dataset = [get_harmful_instructions(), get_harmless_instructions()] # Format: [harmful, harmless]
+    dataset = {'harmful': get_harmful_instructions(), 
+               'harmless': get_harmless_instructions()}
 
     refusal_scores_baseline = []
     refusal_scores_intervention = []
@@ -96,12 +102,12 @@ if __name__ == '__main__':
         max_inst = args.n_instructions
         batch_size = args.batch_size
         conversations_standard = []
-        for batch in range(0, len(dataset[0][1][:max_inst]), batch_size):
+        for batch in range(0, len(dataset['harmful']['test'][:max_inst]), batch_size):
             conversations_standard.extend(forge.evaluate_base_model(
-            model=model,
-            tokenizer=tokenizer,
-            max_new_tokens=50,
-            instructions=dataset[0][1][:max_inst][batch:min(batch + batch_size, len(dataset[0][1][:max_inst]))]
+                model=model,
+                tokenizer=tokenizer,
+                max_new_tokens=50,
+                instructions=dataset['harmful']['test'][:max_inst][batch:min(batch + batch_size, len(dataset['harmful']['test'][:max_inst]))]
             )
         )
 
@@ -127,8 +133,8 @@ if __name__ == '__main__':
             model=model,
             tokenizer=tokenizer,
             scorer=scorer,
-            eval_objective_behaviour_instructions=dataset[0][1][:max_inst],
-            eval_antiobjective_instructions=dataset[1][1][:max_inst],
+            eval_objective_behaviour_instructions=dataset['harmful']['test'][:max_inst],
+            eval_antiobjective_instructions=dataset['harmless']['test'][:max_inst],
             min_layer=min_layer,
             max_layer=max_layer,
         )
