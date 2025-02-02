@@ -94,6 +94,7 @@ if __name__ == '__main__':
         ).to(forge.device)
 
         try:
+            # TODO: try using model.config["num_layers"]
             tot_number_of_layers = len(model.model.layers)
         except AttributeError:
             print(f"{model_name} is not supported. Its HF "
