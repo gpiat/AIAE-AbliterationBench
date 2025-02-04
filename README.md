@@ -11,7 +11,7 @@ We aim to build a benchmark that evaluates the effectiveness of Abliteration at 
 ## Example usage:
 
 ```bash
-python ablit_bench.py -n Qwen/Qwen-1.5-0.5B-Chat meta-llama/Llama-2-7b-chat-hf -l 2 -i 50 -b 10
+python ablit_bench.py -n Qwen/Qwen-1.5-0.5B-Chat google/gemma-1.1-2b-it -l 2 -i 50 -b 10
 ```
 
 ## Context
